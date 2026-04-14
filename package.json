@@ -2,7 +2,7 @@
   "name": "whartonhackathon",
   "version": "1.0.0",
   "private": true,
-  "description": "Milestone 1 travel review globe experience",
+  "description": "Travel review globe (M1) + Rome map itinerary (M2)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -14,13 +14,16 @@
   "license": "ISC",
   "dependencies": {
     "framer-motion": "^12.38.0",
+    "mapbox-gl": "^3.21.0",
     "next": "^16.2.3",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-globe.gl": "^2.37.1",
-    "three": "^0.183.2"
+    "three": "^0.183.2",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@types/mapbox-gl": "^3.4.1",
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

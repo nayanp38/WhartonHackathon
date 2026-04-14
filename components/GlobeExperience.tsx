@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { GlobeMethods } from "react-globe.gl";
 import { CAMERA, SCENE_TIMINGS, type ScenePhase, wait } from "@/lib/animation";
-import { trip } from "@/lib/tripData";
+import type { Trip } from "@/lib/tripData";
 import { ReviewCard } from "@/components/ReviewCard";
 
 const Globe = dynamic(() => import("react-globe.gl"), {
@@ -16,7 +16,12 @@ const EARTH_TEXTURE_URL =
 const BUMP_TEXTURE_URL =
   "https://unpkg.com/three-globe/example/img/earth-topology.png";
 
-export function GlobeExperience() {
+type GlobeExperienceProps = {
+  trip: Trip;
+  onArrivalContinue?: () => void;
+};
+
+export function GlobeExperience({ trip, onArrivalContinue }: GlobeExperienceProps) {
   const globeRef = useRef<GlobeMethods | null>(null);
   const [phase, setPhase] = useState<ScenePhase>("loading");
   const [isGlobeReady, setIsGlobeReady] = useState(false);
@@ -24,7 +29,7 @@ export function GlobeExperience() {
   const [showStop, setShowStop] = useState(false);
   const [showReviewCard, setShowReviewCard] = useState(false);
   const [viewport, setViewport] = useState({ width: 1200, height: 800 });
-  const [pointPulse, setPointPulse] = useState(0.6);
+  const [pointPulse, setPointPulse] = useState(0.62);
 
   useEffect(() => {
     const syncSize = () =>
@@ -46,26 +51,54 @@ export function GlobeExperience() {
     let cancelled = false;
 
     const runSequence = async () => {
+      const { origin, destination } = trip.flight;
+
       setPhase("intro");
       await wait(SCENE_TIMINGS.introPauseMs);
       if (cancelled) return;
 
-      setShowArc(true);
-      setPhase("flight");
-      await wait(SCENE_TIMINGS.flightMs);
-      if (cancelled) return;
-
-      setPhase("zoom");
+      // Leg 1: from the opening globe view to the departure (origin) city.
+      setPhase("departure");
       globeRef.current?.pointOfView(
         {
-          lat: trip.flight.destination.lat,
-          lng: trip.flight.destination.lng,
+          lat: origin.lat,
+          lng: origin.lng,
+          altitude: CAMERA.departure.altitude,
+        },
+        SCENE_TIMINGS.toDepartureMs,
+      );
+      await wait(SCENE_TIMINGS.toDepartureMs);
+      if (cancelled) return;
+
+      await wait(SCENE_TIMINGS.departureSettleMs);
+      if (cancelled) return;
+
+      // Leg 2: arc appears; camera smoothly continues from origin framing to destination
+      // (react-globe.gl interpolates POV from current position to the target).
+      setShowArc(true);
+      setPhase("flight");
+      globeRef.current?.pointOfView(
+        {
+          lat: destination.lat,
+          lng: destination.lng,
           altitude: CAMERA.destination.altitude,
         },
-        SCENE_TIMINGS.zoomMs,
+        SCENE_TIMINGS.flightMs,
       );
+      await wait(SCENE_TIMINGS.flightMs + 80);
+      if (cancelled) return;
 
-      await wait(SCENE_TIMINGS.zoomMs + 80);
+      // Leg 3: subtle emphasis — same target, slightly closer (no backward jump).
+      setPhase("destination-emphasis");
+      globeRef.current?.pointOfView(
+        {
+          lat: destination.lat,
+          lng: destination.lng,
+          altitude: CAMERA.destination.altitude * 0.94,
+        },
+        SCENE_TIMINGS.destinationEmphasisMs,
+      );
+      await wait(SCENE_TIMINGS.destinationEmphasisMs + 60);
       if (cancelled) return;
 
       setShowStop(true);
@@ -82,7 +115,7 @@ export function GlobeExperience() {
     return () => {
       cancelled = true;
     };
-  }, [isGlobeReady]);
+  }, [isGlobeReady, trip]);
 
   useEffect(() => {
     if (!showStop) {
@@ -90,8 +123,8 @@ export function GlobeExperience() {
     }
 
     const pulse = window.setInterval(() => {
-      setPointPulse((prev) => (prev > 0.83 ? 0.6 : prev + 0.035));
-    }, 150);
+      setPointPulse((prev) => (prev > 0.88 ? 0.58 : prev + 0.032));
+    }, 140);
     return () => window.clearInterval(pulse);
   }, [showStop]);
 
@@ -109,7 +142,7 @@ export function GlobeExperience() {
         color: ["#7dd3fc", "#c084fc"],
       },
     ];
-  }, [showArc]);
+  }, [showArc, trip]);
 
   const pointsData = useMemo(() => {
     if (!showStop) {
@@ -123,14 +156,10 @@ export function GlobeExperience() {
         size: pointPulse,
       },
     ];
-  }, [showStop, pointPulse]);
+  }, [showStop, pointPulse, trip]);
 
   return (
     <section className="relative h-screen w-full">
-      <div className="pointer-events-none absolute left-4 top-4 z-20 rounded-full border border-white/20 bg-slate-900/45 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-200 backdrop-blur-md">
-        {phase}
-      </div>
-
       <Globe
         ref={globeRef}
         width={viewport.width}
@@ -140,26 +169,28 @@ export function GlobeExperience() {
         bumpImageUrl={BUMP_TEXTURE_URL}
         showAtmosphere
         atmosphereColor="#7dd3fc"
-        atmosphereAltitude={0.18}
+        atmosphereAltitude={0.2}
         animateIn={false}
         arcsData={arcsData}
-        arcStroke={0.8}
-        arcAltitude={0.2}
-        arcDashLength={0.5}
-        arcDashGap={0.6}
+        arcStroke={0.95}
+        arcAltitude={0.22}
+        arcDashLength={0.48}
+        arcDashGap={0.55}
         arcDashAnimateTime={SCENE_TIMINGS.flightMs}
         pointsData={pointsData}
-        pointAltitude={0.035}
-        pointColor={() => "#f472b6"}
+        pointAltitude={0.038}
+        pointColor={() => "#f9a8d4"}
         pointRadius={(d: unknown) => (d as { size: number }).size}
         onGlobeReady={() => setIsGlobeReady(true)}
       />
 
       {showReviewCard && (
         <ReviewCard
+          variant="arrival"
+          cityName={trip.flight.destination.name}
           stopName={trip.stop.name}
           stopType={trip.stop.type}
-          questions={trip.stop.questions}
+          onContinue={onArrivalContinue}
         />
       )}
     </section>
