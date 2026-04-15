@@ -502,6 +502,6 @@ There's an `eslint-disable-next-line @next/next/no-img-element` above the tag in
 
 ## License
 
-ISC · Built for the 2026 Wharton AI & Analytics Hack-AI-Thon, presented by Expedia.
+MIT License · Built for the 2026 Wharton AI & Analytics Hack-AI-Thon, presented by Expedia.
 
 **Ask what matters. Ask it once. Make it feel like the end of the trip.**
