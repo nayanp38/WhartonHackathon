@@ -178,3 +178,6 @@ scratch/
 # Local notes
 TODO.local.md
 NOTES.local.md
+
+global.d.ts
+**/global.d.ts
