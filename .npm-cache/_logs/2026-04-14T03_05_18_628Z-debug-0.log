@@ -1,0 +1,37 @@
+0 verbose cli /Users/nayanpatel/.nvm/versions/node/v24.13.0/bin/node /Users/nayanpatel/.nvm/versions/node/v24.13.0/lib/node_modules/npm/bin/npm-cli.js
+1 info using npm@11.6.2
+2 info using node@v24.13.0
+3 silly config load:file:/Users/nayanpatel/.nvm/versions/node/v24.13.0/lib/node_modules/npm/npmrc
+4 warn Unknown env config "devdir". This will stop working in the next major version of npm.
+5 silly config load:file:/Users/nayanpatel/WhartonHackathon/.npmrc
+6 silly config load:file:/Users/nayanpatel/.npmrc
+7 silly config load:file:/Users/nayanpatel/.nvm/versions/node/v24.13.0/etc/npmrc
+8 verbose title npm exec create-next-app@latest . --ts --tailwind --eslint --app --use-npm --import-alias @/* --no-src-dir
+9 verbose argv "exec" "--" "create-next-app@latest" "." "--ts" "--tailwind" "--eslint" "--app" "--use-npm" "--import-alias" "@/*" "--no-src-dir"
+10 verbose logfile logs-max:10 dir:/Users/nayanpatel/WhartonHackathon/.npm-cache/_logs/2026-04-14T03_05_18_628Z-
+11 verbose logfile /Users/nayanpatel/WhartonHackathon/.npm-cache/_logs/2026-04-14T03_05_18_628Z-debug-0.log
+12 silly logfile done cleaning log files
+13 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+14 http fetch GET 200 https://registry.npmjs.org/create-next-app 238ms (cache miss)
+15 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+16 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+17 warn exec The following package was not found and will be installed: create-next-app@16.2.3
+18 silly idealTree buildDeps
+19 silly fetch manifest create-next-app@16.2.3
+20 silly packumentCache full:https://registry.npmjs.org/create-next-app cache-miss
+21 http fetch GET 200 https://registry.npmjs.org/create-next-app 161ms (cache miss)
+22 silly packumentCache full:https://registry.npmjs.org/create-next-app set size:undefined disposed:false
+23 silly placeDep ROOT create-next-app@16.2.3 OK for:  want: 16.2.3
+24 silly reify moves {}
+25 silly audit bulk request { 'create-next-app': [ '16.2.3' ] }
+26 http cache create-next-app@https://registry.npmjs.org/create-next-app/-/create-next-app-16.2.3.tgz 0ms (cache hit)
+27 silly tarball no local data for create-next-app@https://registry.npmjs.org/create-next-app/-/create-next-app-16.2.3.tgz. Extracting by manifest.
+28 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 201ms
+29 silly audit report {}
+30 http fetch GET 200 https://registry.npmjs.org/create-next-app/-/create-next-app-16.2.3.tgz 213ms (cache miss)
+31 verbose cwd /Users/nayanpatel/WhartonHackathon
+32 verbose os Darwin 24.6.0
+33 verbose node v24.13.0
+34 verbose npm  v11.6.2
+35 verbose exit 0
+36 info ok
